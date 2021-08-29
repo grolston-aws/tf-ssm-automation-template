@@ -1,0 +1,74 @@
+
+---
+description: |
+  ### Document name - POC-EC2TaggingExample
+
+  ## What does this document do?
+  Applies tag to EC2 instance
+
+
+  ## Input Parameters
+  * instanceID : EC2 Instance ID to tag
+  * tagKey: EC2 tag key to apply
+  * tagValue: EC2 tag value to apply.
+  * AutomationAssumeRoleARN (Optional) The ARN of the role that allows Automation to perform the actions on your behalf.
+
+  ## Output parameters
+  * NA
+
+  ## Minimum Permissions Required
+  * ec2:CreateTag
+
+
+schemaVersion: "0.3"
+assumeRole: "{{AutomationAssumeRole}}"
+parameters:
+  AutomationAssumeRole:
+    type: String
+    description: (Optional) The role ARN to assume during automation execution.
+    default: "${aws_iam_role.role.arn}"
+  instanceId:
+    type: String
+    description: (Optional) Amazon S3 bucket where you want to export the result summary.
+    default: ""
+  tagKey:
+    type: String
+    description: (Optional) Amazon S3 bucket where you want to export the result summary.
+    default: ""
+  tagValue:
+    type: String
+    description: (Optional) Amazon S3 bucket where you want to export the result summary.
+    default: ""
+
+mainSteps:
+  - name: TagEc2Instance
+    action: aws:executeScript
+    description: |
+      ### What does the step do?
+      Adds a tag key and tag value to an EC2 instance
+
+      ### What is the output of the step?
+      No output
+    inputs:
+      Runtime: python3.8
+      Handler: tag_instance
+      InputPayload:
+        instance_id: "{{ instanceId }}"
+        tag_value: "{{ tagValue }}"
+        tag_key: "{{ tagKey }}"
+      Script: |
+        import json
+        import boto3
+        import botocore
+        from botocore.exceptions import ClientError
+
+        def tag_instance(events, context):
+          ec2 = boto3.client('ec2')
+          ## grab pass parameters
+          instance_id = events['instance_id']
+          tag_value = events['tag_value']
+          tag_key = events['tag_key']
+
+          response = ec2.create_tags(Resources=[ instance_id, ], Tags=[{ 'Key': tag_key, 'Value': tag_value},)
+          print('[INFO] 1 EC2 instance is successfully launched', instance_id)
+
