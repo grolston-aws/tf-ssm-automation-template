@@ -1,4 +1,17 @@
 
+provider "aws" {
+  profile = "default"
+  version = "~> 3.52.0"
+  region  = var.aws_region
+}
+## update backend s3 bucket for state file management
+terraform {
+  backend "s3" {
+    bucket = "tfstate-workload1"
+    key    = "ssm-automation-poc/terraform.tfstate"
+    region = "us-west-2"
+  }
+}
 
 ## IAM Role for SSM POC
 data "aws_iam_policy_document" "ssm_role_policy" {
@@ -16,11 +29,11 @@ resource "aws_iam_role" "role" {
   name = "mypoc-ssm-role"
   path = "/"
 
-  assume_role_policy = "${data.aws_iam_policy_document.ssm_role_policy.json}"
+  assume_role_policy = data.aws_iam_policy_document.ssm_role_policy.json
 }
 
 resource "aws_iam_role_policy_attachment" "attach_ssm_automation" {
-  role       = "${aws_iam_role.role.name}"
+  role       = aws_iam_role.role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonSSMAutomationRole"
 }
 
@@ -34,12 +47,12 @@ data "aws_iam_policy_document" "ssm_role_ec2tag" {
 resource "aws_iam_policy" "policy_ec2tag" {
   name        = "poc-ssm-ec2tagging-policy"
   description = "allow ec2 tagging for SSM poc"
-  policy      = "${data.aws_iam_policy_document.ssm_role_ec2tag.json}"
+  policy      = data.aws_iam_policy_document.ssm_role_ec2tag.json
 }
 
 resource "aws_iam_role_policy_attachment" "attach_passrole" {
-  role       = "${aws_iam_role.role.name}"
-  policy_arn = "${aws_iam_policy.policy_passrole.arn}"
+  role       = aws_iam_role.role.name
+  policy_arn = aws_iam_policy.policy_passrole.arn
 }
 
 
@@ -47,8 +60,8 @@ resource "aws_iam_role_policy_attachment" "attach_passrole" {
 ## SSM Automation Runbook
 
 resource "aws_ssm_document" "ssm_automation_poc" {
-  name           = "POC-EC2TaggingExample"
-  document_type  = "Automation"
+  name            = "POC-EC2TaggingExample"
+  document_type   = "Automation"
   document_format = "YAML"
 
   content = <<DOC
