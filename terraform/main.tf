@@ -40,7 +40,8 @@ resource "aws_iam_role_policy_attachment" "attach_ssm_automation" {
 data "aws_iam_policy_document" "ssm_role_ec2tag" {
   statement {
     actions   = ["ec2:CreateTag", "ec2:Describe*"]
-    resources = "*"
+    resources = ["*"]
+    effect = "Allow"
   }
 }
 
@@ -63,6 +64,7 @@ resource "aws_ssm_document" "ssm_automation_poc" {
   name            = "POC-EC2TaggingExample"
   document_type   = "Automation"
   document_format = "YAML"
+  depends_on      = [aws_iam_role.role]
 
   content = <<DOC
 ---
