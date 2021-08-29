@@ -53,7 +53,7 @@ resource "aws_iam_policy" "policy_ec2tag" {
 
 resource "aws_iam_role_policy_attachment" "attach_passrole" {
   role       = aws_iam_role.role.name
-  policy_arn = aws_iam_policy.policy_passrole.arn
+  policy_arn = aws_iam_policy.policy_ec2tag.arn
 }
 
 
