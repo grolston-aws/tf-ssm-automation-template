@@ -41,7 +41,7 @@ data "aws_iam_policy_document" "ssm_role_ec2tag" {
   statement {
     actions   = ["ec2:CreateTag", "ec2:Describe*"]
     resources = ["*"]
-    effect = "Allow"
+    effect    = "Allow"
   }
 }
 
