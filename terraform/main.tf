@@ -118,7 +118,7 @@ mainSteps:
       ### What is the output of the step?
       No output
     inputs:
-      Runtime: python3.8
+      Runtime: python3.7
       Handler: tag_instance
       InputPayload:
         instance_id: "{{ instanceId }}"
