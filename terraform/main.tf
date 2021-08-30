@@ -60,7 +60,7 @@ resource "aws_iam_role_policy_attachment" "attach_passrole" {
 
 ## SSM Automation Runbook
 
-resource "aws_ssm_document" "ssm_automation_poc" {
+resource "aws_ssm_document" "ssm_automation_pocv2" {
   name            = "POC-EC2TaggingExample"
   document_type   = "Automation"
   document_format = "YAML"
@@ -137,7 +137,7 @@ mainSteps:
           tag_value = events['tag_value']
           tag_key = events['tag_key']
 
-          response = ec2.create_tags(Resources=[ instance_id, ], Tags=[{ 'Key': tag_key, 'Value': tag_value},)
+          response = ec2.create_tags(Resources=[ instance_id, ], Tags=[{ 'Key': tag_key, 'Value': tag_value},])
           print('[INFO] 1 EC2 instance is successfully launched', instance_id)
 DOC
 }
