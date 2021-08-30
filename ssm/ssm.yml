@@ -26,18 +26,18 @@ parameters:
   AutomationAssumeRole:
     type: String
     description: (Optional) The role ARN to assume during automation execution.
-    default: "${aws_iam_role.role.arn}"
+    default: "{{AutomationAssumeRole}}"
   instanceId:
     type: String
-    description: (Optional) Amazon S3 bucket where you want to export the result summary.
+    description: The instance id to tag an EC2 with.
     default: ""
   tagKey:
     type: String
-    description: (Optional) Amazon S3 bucket where you want to export the result summary.
+    description: The tag key being applied to the EC2 instance id.
     default: ""
   tagValue:
     type: String
-    description: (Optional) Amazon S3 bucket where you want to export the result summary.
+    description: The tag value being applied to the EC2 instance id.
     default: ""
 
 mainSteps:
@@ -70,5 +70,5 @@ mainSteps:
           tag_key = events['tag_key']
 
           response = ec2.create_tags(Resources=[ instance_id, ], Tags=[{ 'Key': tag_key, 'Value': tag_value},)
-          print('[INFO] 1 EC2 instance is successfully launched', instance_id)
+          print('[INFO] 1 EC2 instance is successfully tagged', instance_id)
 

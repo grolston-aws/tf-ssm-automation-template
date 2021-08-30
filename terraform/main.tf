@@ -25,7 +25,7 @@ data "aws_iam_policy_document" "ssm_role_policy" {
   }
 }
 
-resource "aws_iam_role" "role" {
+resource "aws_iam_role" "ssm_role" {
   name = "mypoc-ssm-role"
   path = "/"
 
@@ -33,7 +33,7 @@ resource "aws_iam_role" "role" {
 }
 
 resource "aws_iam_role_policy_attachment" "attach_ssm_automation" {
-  role       = aws_iam_role.role.name
+  role       = aws_iam_role.ssm_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonSSMAutomationRole"
 }
 
@@ -52,7 +52,7 @@ resource "aws_iam_policy" "policy_ec2tag" {
 }
 
 resource "aws_iam_role_policy_attachment" "attach_passrole" {
-  role       = aws_iam_role.role.name
+  role       = aws_iam_role.ssm_role.name
   policy_arn = aws_iam_policy.policy_ec2tag.arn
 }
 
@@ -61,15 +61,15 @@ resource "aws_iam_role_policy_attachment" "attach_passrole" {
 ## SSM Automation Runbook
 
 resource "aws_ssm_document" "ssm_automation_poc" {
-  name            = "POC-EC2TaggingExample"
+  name            = "POC-EC2Tagging"
   document_type   = "Automation"
   document_format = "YAML"
-  depends_on      = [aws_iam_role.role]
+  depends_on      = [aws_iam_role.ssm_role]
 
   content = <<DOC
 ---
 description: |
-  ### Document name - POC-EC2TaggingExample
+  ### Document name - POC-EC2Tagging
 
   ## What does this document do?
   Applies tag to EC2 instance
@@ -94,18 +94,18 @@ parameters:
   AutomationAssumeRole:
     type: String
     description: (Optional) The role ARN to assume during automation execution.
-    default: "${aws_iam_role.role.arn}"
+    default: "${aws_iam_role.ssm_role.arn}"
   instanceId:
     type: String
-    description: (Optional) Amazon S3 bucket where you want to export the result summary.
+    description: The instance id to tag an EC2 with.
     default: ""
   tagKey:
     type: String
-    description: (Optional) Amazon S3 bucket where you want to export the result summary.
+    description: The tag key being applied to the EC2 instance id.
     default: ""
   tagValue:
     type: String
-    description: (Optional) Amazon S3 bucket where you want to export the result summary.
+    description: The tag value being applied to the EC2 instance id.
     default: ""
 
 mainSteps:
@@ -138,6 +138,6 @@ mainSteps:
           tag_key = events['tag_key']
 
           response = ec2.create_tags(Resources=[ instance_id, ], Tags=[{ 'Key': tag_key, 'Value': tag_value},])
-          print('[INFO] 1 EC2 instance is successfully launched', instance_id)
+          print('[INFO] 1 EC2 instance is successfully tagged', instance_id)
 DOC
 }
