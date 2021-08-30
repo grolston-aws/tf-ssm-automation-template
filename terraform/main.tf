@@ -60,7 +60,7 @@ resource "aws_iam_role_policy_attachment" "attach_passrole" {
 
 ## SSM Automation Runbook
 
-resource "aws_ssm_document" "ssm_automation_poc" {
+resource "aws_ssm_document" "ssm_runbook_poc" {
   name            = "POC-EC2Tagging"
   document_type   = "Automation"
   document_format = "YAML"

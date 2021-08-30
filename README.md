@@ -1,4 +1,4 @@
-# AWS SSM Automation Runbook with Action aws:executeScript in Terraform
+# Terraform POC for AWS SSM Automation Using aws:executeScript
 
 A simple example of how to take common administrative Python Boto3 scripts and put them into AWS [SSM Automation Action](https://docs.aws.amazon.com/systems-manager/latest/userguide/automation-actions.html) using the [`aws:executeScript`](https://docs.aws.amazon.com/systems-manager/latest/userguide/automation-action-executeScript.html) action.
 
@@ -16,9 +16,9 @@ The script being executed is in the poc is intended to be as simple as possible 
 
 The following resources are deployed when applying the ./terraform directory:
 
-1. IAM Role - `mypoc-ssm-role` - The SSM role which will have permissions to execute the SSM Runbook
+1. IAM Role - `ssm_role` - The SSM role which will have permissions to execute the SSM Runbook
 2. IAM Managed Policy - `ssm_role_ec2tag` - managed policy attached to the `mypoc-ssm-role` giving permissions to necessary resources
-3. SSM Document - `ssm_automation_poc` - SSM Document which executes the python script using the IAM role `mypoc-ssm-role`
+3. SSM Document - `ssm_runbook_poc` - SSM Document which executes the python script using the IAM role `mypoc-ssm-role`
 
 ## Project Breakdown
 
