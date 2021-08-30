@@ -39,7 +39,7 @@ resource "aws_iam_role_policy_attachment" "attach_ssm_automation" {
 
 data "aws_iam_policy_document" "ssm_role_ec2tag" {
   statement {
-    actions   = ["ec2:CreateTag", "ec2:Describe*"]
+    actions   = ["ec2:CreateTag", "ec2:Describe*", "logs:*"]
     resources = ["*"]
     effect    = "Allow"
   }
